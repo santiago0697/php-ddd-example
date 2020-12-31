@@ -1,26 +1,22 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace CodelyTv\Mooc\Courses\Application\Update;
 
 use CodelyTv\Mooc\Courses\Application\Find\CourseFinder;
 use CodelyTv\Mooc\Courses\Domain\CourseName;
 use CodelyTv\Mooc\Courses\Domain\CourseRepository;
-use CodelyTv\Mooc\Shared\Domain\Course\CourseId;
+use CodelyTv\Mooc\Shared\Domain\Courses\CourseId;
 use CodelyTv\Shared\Domain\Bus\Event\EventBus;
 
 final class CourseRenamer
 {
-    private CourseRepository $repository;
     private CourseFinder     $finder;
-    private EventBus         $bus;
 
-    public function __construct(CourseRepository $repository, EventBus $bus)
+    public function __construct(private CourseRepository $repository, private EventBus $bus)
     {
-        $this->repository = $repository;
-        $this->finder     = new CourseFinder($repository);
-        $this->bus        = $bus;
+        $this->finder = new CourseFinder($repository);
     }
 
     public function __invoke(CourseId $id, CourseName $newName): void

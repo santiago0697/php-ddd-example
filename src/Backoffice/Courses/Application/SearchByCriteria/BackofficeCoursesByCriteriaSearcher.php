@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace CodelyTv\Backoffice\Courses\Application\SearchByCriteria;
 
@@ -15,11 +15,8 @@ use function Lambdish\Phunctional\map;
 
 final class BackofficeCoursesByCriteriaSearcher
 {
-    private BackofficeCourseRepository $repository;
-
-    public function __construct(BackofficeCourseRepository $repository)
+    public function __construct(private BackofficeCourseRepository $repository)
     {
-        $this->repository = $repository;
     }
 
     public function search(Filters $filters, Order $order, ?int $limit, ?int $offset): BackofficeCoursesResponse

@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace CodelyTv\Shared\Infrastructure\Symfony;
 
@@ -13,20 +13,15 @@ use function Lambdish\Phunctional\each;
 
 abstract class ApiController
 {
-    private QueryBus                           $queryBus;
-    private CommandBus                         $commandBus;
-    private ApiExceptionsHttpStatusCodeMapping $exceptionHandler;
-
     public function __construct(
-        QueryBus $queryBus,
-        CommandBus $commandBus,
+        private QueryBus $queryBus,
+        private CommandBus $commandBus,
         ApiExceptionsHttpStatusCodeMapping $exceptionHandler
     ) {
-        $this->queryBus         = $queryBus;
-        $this->commandBus       = $commandBus;
-        $this->exceptionHandler = $exceptionHandler;
-
-        each($this->exceptionRegistrar(), $this->exceptions());
+        each(
+            fn(int $httpCode, string $exceptionClass) => $exceptionHandler->register($exceptionClass, $httpCode),
+            $this->exceptions()
+        );
     }
 
     abstract protected function exceptions(): array;
@@ -39,12 +34,5 @@ abstract class ApiController
     protected function dispatch(Command $command): void
     {
         $this->commandBus->dispatch($command);
-    }
-
-    private function exceptionRegistrar(): callable
-    {
-        return function ($httpCode, $exception): void {
-            $this->exceptionHandler->register($exception, $httpCode);
-        };
     }
 }

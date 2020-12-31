@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace CodelyTv\Shared\Infrastructure\Bus\Query;
 
@@ -16,7 +16,7 @@ use Symfony\Component\Messenger\Stamp\HandledStamp;
 
 final class InMemorySymfonyQueryBus implements QueryBus
 {
-    private $bus;
+    private MessageBus $bus;
 
     public function __construct(iterable $queryHandlers)
     {
@@ -36,7 +36,7 @@ final class InMemorySymfonyQueryBus implements QueryBus
             $stamp = $this->bus->dispatch($query)->last(HandledStamp::class);
 
             return $stamp->getResult();
-        } catch (NoHandlerForMessageException $unused) {
+        } catch (NoHandlerForMessageException) {
             throw new QueryNotRegisteredError($query);
         }
     }

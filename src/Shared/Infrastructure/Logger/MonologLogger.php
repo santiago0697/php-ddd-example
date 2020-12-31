@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace CodelyTv\Shared\Infrastructure\Logger;
 
@@ -8,11 +8,8 @@ use CodelyTv\Shared\Domain\Logger;
 
 final class MonologLogger implements Logger
 {
-    private \Monolog\Logger $logger;
-
-    public function __construct(\Monolog\Logger $logger)
+    public function __construct(private \Monolog\Logger $logger)
     {
-        $this->logger = $logger;
     }
 
     public function info(string $message, array $context = []): void

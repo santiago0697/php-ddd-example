@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace CodelyTv\Shared\Infrastructure\Bus\Event\InMemory;
 
@@ -34,7 +34,7 @@ class InMemorySymfonyEventBus implements EventBus
         foreach ($events as $event) {
             try {
                 $this->bus->dispatch($event);
-            } catch (NoHandlerForMessageException $error) {
+            } catch (NoHandlerForMessageException) {
             }
         }
     }

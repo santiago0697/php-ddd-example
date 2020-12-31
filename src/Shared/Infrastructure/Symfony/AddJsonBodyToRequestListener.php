@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace CodelyTv\Shared\Infrastructure\Symfony;
 
@@ -33,8 +33,8 @@ final class AddJsonBodyToRequestListener
         }
     }
 
-    private function containsHeader(Request $request, $name, $value): bool
+    private function containsHeader(Request $request, string $name, string $value): bool
     {
-        return 0 === strpos($request->headers->get($name), $value);
+        return str_starts_with($request->headers->get($name), $value);
     }
 }

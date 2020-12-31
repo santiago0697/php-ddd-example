@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace CodelyTv\Shared\Infrastructure\Bus\Command;
 
@@ -32,10 +32,10 @@ final class InMemorySymfonyCommandBus implements CommandBus
     {
         try {
             $this->bus->dispatch($command);
-        } catch (NoHandlerForMessageException $unused) {
+        } catch (NoHandlerForMessageException) {
             throw new CommandNotRegisteredError($command);
         } catch (HandlerFailedException $error) {
-            throw $error->getPrevious();
+            throw $error->getPrevious() ?? $error;
         }
     }
 }

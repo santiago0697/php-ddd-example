@@ -1,11 +1,12 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace CodelyTv\Shared\Domain;
 
 use DateTimeImmutable;
 use DateTimeInterface;
+use ReflectionClass;
 use RuntimeException;
 use function Lambdish\Phunctional\filter;
 
@@ -57,7 +58,7 @@ final class Utils
         return lcfirst(str_replace('_', '', ucwords($text, '_')));
     }
 
-    public static function dot($array, $prepend = ''): array
+    public static function dot(array $array, string $prepend = ''): array
     {
         $results = [];
         foreach ($array as $key => $value) {
@@ -71,19 +72,27 @@ final class Utils
         return $results;
     }
 
-    public static function directoriesIn(string $path): array
-    {
-        return filter(
-            static fn(string $possibleModule) => !in_array($possibleModule, ['.', '..']),
-            scandir($path)
-        );
-    }
-
-    public static function filesIn(string $path, $fileType): array
+    public static function filesIn(string $path, string $fileType): array
     {
         return filter(
             static fn(string $possibleModule) => strstr($possibleModule, $fileType),
             scandir($path)
         );
+    }
+
+    public static function extractClassName(object $object): string
+    {
+        $reflect = new ReflectionClass($object);
+
+        return $reflect->getShortName();
+    }
+
+    public static function iterableToArray(iterable $iterable): array
+    {
+        if (is_array($iterable)) {
+            return $iterable;
+        }
+
+        return iterator_to_array($iterable);
     }
 }

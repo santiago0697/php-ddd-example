@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace CodelyTv\Apps\Mooc\Backend\Command\DomainEvents\MySql;
 
@@ -16,20 +16,13 @@ use function Lambdish\Phunctional\pipe;
 
 final class ConsumeMySqlDomainEventsCommand extends Command
 {
-    protected static                          $defaultName = 'codelytv:domain-events:mysql:consume';
-    private MySqlDoctrineDomainEventsConsumer $consumer;
-    private DomainEventSubscriberLocator      $subscriberLocator;
-    private DatabaseConnections               $connections;
+    protected static $defaultName = 'codelytv:domain-events:mysql:consume';
 
     public function __construct(
-        MySqlDoctrineDomainEventsConsumer $consumer,
-        DatabaseConnections $connections,
-        DomainEventSubscriberLocator $subscriberLocator
+        private MySqlDoctrineDomainEventsConsumer $consumer,
+        private DatabaseConnections $connections,
+        private DomainEventSubscriberLocator $subscriberLocator
     ) {
-        $this->consumer          = $consumer;
-        $this->subscriberLocator = $subscriberLocator;
-        $this->connections       = $connections;
-
         parent::__construct();
     }
 
@@ -40,13 +33,15 @@ final class ConsumeMySqlDomainEventsCommand extends Command
             ->addArgument('quantity', InputArgument::REQUIRED, 'Quantity of events to process');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): void
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $quantityEventsToProcess = (int) $input->getArgument('quantity');
 
-        $consumer = pipe($this->consumer(), $this->clearConnections());
+        $consumer = pipe($this->consumer(), fn() => $this->connections->clear());
 
         $this->consumer->consume($consumer, $quantityEventsToProcess);
+
+        return 0;
     }
 
     private function consumer(): callable
@@ -57,13 +52,6 @@ final class ConsumeMySqlDomainEventsCommand extends Command
             foreach ($subscribers as $subscriber) {
                 $subscriber($domainEvent);
             }
-        };
-    }
-
-    private function clearConnections(): callable
-    {
-        return function () {
-            $this->connections->clear();
         };
     }
 }

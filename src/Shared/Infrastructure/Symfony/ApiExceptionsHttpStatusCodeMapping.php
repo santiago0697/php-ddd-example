@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace CodelyTv\Shared\Infrastructure\Symfony;
 
@@ -17,18 +17,19 @@ final class ApiExceptionsHttpStatusCodeMapping
         NotFoundHttpException::class    => Response::HTTP_NOT_FOUND,
     ];
 
-    public function register($exceptionClass, $statusCode): void
+    public function register(string $exceptionClass, int $statusCode): void
     {
         $this->exceptions[$exceptionClass] = $statusCode;
     }
 
-    public function exists($exceptionClass): bool
+    public function statusCodeFor(string $exceptionClass): int
     {
-        return array_key_exists($exceptionClass, $this->exceptions);
-    }
+        $statusCode = get($exceptionClass, $this->exceptions, self::DEFAULT_STATUS_CODE);
 
-    public function statusCodeFor($exceptionClass): int
-    {
-        return get($exceptionClass, $this->exceptions, self::DEFAULT_STATUS_CODE);
+        if (null === $statusCode) {
+            throw new InvalidArgumentException("There are no status code mapping for <$exceptionClass>");
+        }
+
+        return $statusCode;
     }
 }

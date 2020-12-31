@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace CodelyTv\Shared\Infrastructure\Elasticsearch;
 
@@ -28,7 +28,7 @@ final class ElasticsearchClientFactory
         Client $client,
         string $indexPrefix,
         string $schemasFolder,
-        $environment
+        string $environment
     ): void {
         $indexes = Utils::filesIn($schemasFolder, '.json');
 
@@ -49,7 +49,7 @@ final class ElasticsearchClientFactory
             $client->indices()->getSettings(['index' => $indexName]);
 
             return true;
-        } catch (Missing404Exception $unused) {
+        } catch (Missing404Exception) {
             return false;
         }
     }

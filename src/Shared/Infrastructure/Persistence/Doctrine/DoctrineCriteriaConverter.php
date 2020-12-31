@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace CodelyTv\Shared\Infrastructure\Persistence\Doctrine;
 
@@ -14,15 +14,11 @@ use Doctrine\Common\Collections\Expr\CompositeExpression;
 
 final class DoctrineCriteriaConverter
 {
-    private Criteria $criteria;
-    private array    $criteriaToDoctrineFields;
-    private array    $hydrators;
-
-    public function __construct(Criteria $criteria, array $criteriaToDoctrineFields = [], array $hydrators = [])
-    {
-        $this->criteria                 = $criteria;
-        $this->criteriaToDoctrineFields = $criteriaToDoctrineFields;
-        $this->hydrators                = $hydrators;
+    public function __construct(
+        private Criteria $criteria,
+        private array $criteriaToDoctrineFields = [],
+        private array $hydrators = []
+    ) {
     }
 
     public static function convert(
@@ -35,16 +31,6 @@ final class DoctrineCriteriaConverter
         return $converter->convertToDoctrineCriteria();
     }
 
-    public static function convertToCount(
-        Criteria $criteria,
-        array $criteriaToDoctrineFields = [],
-        array $hydrators = []
-    ): DoctrineCriteria {
-        $converter = new self($criteria, $criteriaToDoctrineFields, $hydrators);
-
-        return $converter->convertToDoctrineCriteriaToCount();
-    }
-
     private function convertToDoctrineCriteria(): DoctrineCriteria
     {
         return new DoctrineCriteria(
@@ -53,11 +39,6 @@ final class DoctrineCriteriaConverter
             $this->criteria->offset(),
             $this->criteria->limit()
         );
-    }
-
-    private function convertToDoctrineCriteriaToCount(): DoctrineCriteria
-    {
-        return new DoctrineCriteria($this->buildExpression($this->criteria), $this->formatOrder($this->criteria));
     }
 
     private function buildExpression(Criteria $criteria): ?CompositeExpression
@@ -112,7 +93,7 @@ final class DoctrineCriteriaConverter
         return array_key_exists($field, $this->hydrators);
     }
 
-    private function hydrate($field, $value)
+    private function hydrate($field, string $value)
     {
         return $this->hydrators[$field]($value);
     }

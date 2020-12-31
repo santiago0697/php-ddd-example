@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace CodelyTv\Apps\Mooc\Backend\Command\DomainEvents\RabbitMq;
 
@@ -18,14 +18,11 @@ final class GenerateSupervisorRabbitMqConsumerFilesCommand extends Command
     private const EVENTS_TO_PROCESS_AT_TIME           = 200;
     private const NUMBERS_OF_PROCESSES_PER_SUBSCRIBER = 1;
     private const SUPERVISOR_PATH                     = __DIR__ . '/../../../../build/supervisor';
-    protected static                     $defaultName = 'codelytv:domain-events:rabbitmq:generate-supervisor-files';
-    private DomainEventSubscriberLocator $locator;
+    protected static $defaultName = 'codelytv:domain-events:rabbitmq:generate-supervisor-files';
 
-    public function __construct(DomainEventSubscriberLocator $locator)
+    public function __construct(private DomainEventSubscriberLocator $locator)
     {
         parent::__construct();
-
-        $this->locator = $locator;
     }
 
     protected function configure(): void
@@ -35,11 +32,13 @@ final class GenerateSupervisorRabbitMqConsumerFilesCommand extends Command
             ->addArgument('command-path', InputArgument::OPTIONAL, 'Path on this is gonna be deployed', '/var/www');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): void
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $path = (string) $input->getArgument('command-path');
 
         each($this->configCreator($path), $this->locator->all());
+
+        return 0;
     }
 
     private function configCreator(string $path): callable

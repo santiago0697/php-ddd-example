@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace CodelyTv\Apps\Mooc\Backend\Controller\Courses;
 
@@ -11,21 +11,21 @@ use Symfony\Component\HttpFoundation\Response;
 
 final class CoursesPutController extends ApiController
 {
-    protected function exceptions(): array
-    {
-        return [];
-    }
-
     public function __invoke(string $id, Request $request): Response
     {
         $this->dispatch(
             new CreateCourseCommand(
                 $id,
-                $request->request->get('name'),
-                $request->request->get('duration')
+                $request->request->getAlpha('name'),
+                $request->request->getAlpha('duration')
             )
         );
 
         return new Response('', Response::HTTP_CREATED);
+    }
+
+    protected function exceptions(): array
+    {
+        return [];
     }
 }

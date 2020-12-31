@@ -1,20 +1,16 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace CodelyTv\Shared\Domain\Criteria;
 
 final class Filter
 {
-    private FilterField    $field;
-    private FilterOperator $operator;
-    private FilterValue    $value;
-
-    public function __construct(FilterField $field, FilterOperator $operator, FilterValue $value)
-    {
-        $this->field    = $field;
-        $this->operator = $operator;
-        $this->value    = $value;
+    public function __construct(
+        private FilterField $field,
+        private FilterOperator $operator,
+        private FilterValue $value
+    ) {
     }
 
     public static function fromValues(array $values): self

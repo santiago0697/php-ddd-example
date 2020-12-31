@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace CodelyTv\Shared\Infrastructure\Bus\Event;
 
@@ -25,11 +25,6 @@ final class DomainEventMapping
         }
 
         return $this->mapping[$name];
-    }
-
-    public function all()
-    {
-        return $this->mapping;
     }
 
     private function eventsExtractor(): callable

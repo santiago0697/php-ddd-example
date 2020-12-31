@@ -1,24 +1,22 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace CodelyTv\Shared\Domain\ValueObject;
 
 use CodelyTv\Shared\Domain\Utils;
 use ReflectionClass;
+use Stringable;
 use function in_array;
 use function Lambdish\Phunctional\reindex;
 
-abstract class Enum
+abstract class Enum implements Stringable
 {
     protected static array $cache = [];
-    protected              $value;
 
-    public function __construct($value)
+    public function __construct(protected $value)
     {
         $this->ensureIsBetweenAcceptedValues($value);
-
-        $this->value = $value;
     }
 
     abstract protected function throwExceptionForInvalidValue($value);
@@ -50,6 +48,16 @@ abstract class Enum
         return self::values()[array_rand(self::values())];
     }
 
+    public static function random(): static
+    {
+        return new static(self::randomValue());
+    }
+
+    private static function keysFormatter(): callable
+    {
+        return static fn($unused, string $key): string => Utils::toCamelCase(strtolower($key));
+    }
+
     public function value()
     {
         return $this->value;
@@ -60,25 +68,15 @@ abstract class Enum
         return $other == $this;
     }
 
+    public function __toString(): string
+    {
+        return (string) $this->value();
+    }
+
     private function ensureIsBetweenAcceptedValues($value): void
     {
         if (!in_array($value, static::values(), true)) {
             $this->throwExceptionForInvalidValue($value);
         }
-    }
-
-    public static function random(): self
-    {
-        return new static(self::randomValue());
-    }
-
-    private static function keysFormatter(): callable
-    {
-        return static fn($unused, string $key): string => Utils::toCamelCase(strtolower($key));
-    }
-
-    public function __toString(): string
-    {
-        return (string) $this->value();
     }
 }

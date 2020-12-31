@@ -1,20 +1,16 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace CodelyTv\Mooc\Courses\Domain;
 
-use CodelyTv\Mooc\Shared\Domain\Course\CourseId;
+use CodelyTv\Mooc\Shared\Domain\Courses\CourseId;
 use CodelyTv\Shared\Domain\DomainError;
 
 final class CourseNotExist extends DomainError
 {
-    private CourseId $id;
-
-    public function __construct(CourseId $id)
+    public function __construct(private CourseId $id)
     {
-        $this->id = $id;
-
         parent::__construct();
     }
 

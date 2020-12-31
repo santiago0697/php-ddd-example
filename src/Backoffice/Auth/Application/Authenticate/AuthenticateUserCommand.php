@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace CodelyTv\Backoffice\Auth\Application\Authenticate;
 
@@ -8,13 +8,8 @@ use CodelyTv\Shared\Domain\Bus\Command\Command;
 
 final class AuthenticateUserCommand implements Command
 {
-    private string $username;
-    private string $password;
-
-    public function __construct(string $username, string $password)
+    public function __construct(private string $username, private string $password)
     {
-        $this->username = $username;
-        $this->password = $password;
     }
 
     public function username(): string

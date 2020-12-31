@@ -1,23 +1,28 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace CodelyTv\Shared\Domain\Criteria;
 
 final class Order
 {
-    private OrderBy   $orderBy;
-    private OrderType $orderType;
-
-    public function __construct(OrderBy $orderBy, OrderType $orderType)
+    public function __construct(private OrderBy $orderBy, private OrderType $orderType)
     {
-        $this->orderBy   = $orderBy;
-        $this->orderType = $orderType;
     }
 
     public static function createDesc(OrderBy $orderBy): Order
     {
         return new self($orderBy, OrderType::desc());
+    }
+
+    public static function fromValues(?string $orderBy, ?string $order): Order
+    {
+        return null === $orderBy ? self::none() : new Order(new OrderBy($orderBy), new OrderType($order));
+    }
+
+    public static function none(): Order
+    {
+        return new Order(new OrderBy(''), OrderType::none());
     }
 
     public function orderBy(): OrderBy
@@ -30,19 +35,9 @@ final class Order
         return $this->orderType;
     }
 
-    public static function fromValues(?string $orderBy, ?string $order): Order
-    {
-        return null === $orderBy ? self::none() : new Order(new OrderBy($orderBy), new OrderType($order));
-    }
-
     public function isNone(): bool
     {
         return $this->orderType()->isNone();
-    }
-
-    public static function none(): Order
-    {
-        return new Order(new OrderBy(''), OrderType::none());
     }
 
     public function serialize(): string

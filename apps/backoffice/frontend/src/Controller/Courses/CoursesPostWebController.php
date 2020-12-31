@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace CodelyTv\Apps\Backoffice\Frontend\Controller\Courses;
 
@@ -14,11 +14,6 @@ use Symfony\Component\Validator\Validation;
 
 final class CoursesPostWebController extends WebController
 {
-    protected function exceptions(): array
-    {
-        return [];
-    }
-
     public function __invoke(Request $request): RedirectResponse
     {
         $validationErrors = $this->validateRequest($request);
@@ -26,6 +21,11 @@ final class CoursesPostWebController extends WebController
         return $validationErrors->count()
             ? $this->redirectWithErrors('courses_get', $validationErrors, $request)
             : $this->createCourse($request);
+    }
+
+    protected function exceptions(): array
+    {
+        return [];
     }
 
     private function validateRequest(Request $request): ConstraintViolationListInterface
@@ -47,15 +47,15 @@ final class CoursesPostWebController extends WebController
     {
         $this->dispatch(
             new CreateCourseCommand(
-                $request->request->get('id'),
-                $request->request->get('name'),
-                $request->request->get('duration')
+                $request->request->getAlpha('id'),
+                $request->request->getAlpha('name'),
+                $request->request->getAlpha('duration')
             )
         );
 
         return $this->redirectWithMessage(
             'courses_get',
-            sprintf('Feliciades, el curso %s ha sido creado!', $request->request->get('name'))
+            sprintf('Feliciades, el curso %s ha sido creado!', $request->request->getAlpha('name'))
         );
     }
 }

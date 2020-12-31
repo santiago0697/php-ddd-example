@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace CodelyTv\Shared\Infrastructure\Persistence\Doctrine;
 
@@ -10,11 +10,8 @@ use Doctrine\ORM\EntityRepository;
 
 abstract class DoctrineRepository
 {
-    private EntityManager $entityManager;
-
-    public function __construct(EntityManager $entityManager)
+    public function __construct(private EntityManager $entityManager)
     {
-        $this->entityManager = $entityManager;
     }
 
     protected function entityManager(): EntityManager
@@ -34,7 +31,7 @@ abstract class DoctrineRepository
         $this->entityManager()->flush($entity);
     }
 
-    protected function repository($entityClass): EntityRepository
+    protected function repository(string $entityClass): EntityRepository
     {
         return $this->entityManager->getRepository($entityClass);
     }

@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace CodelyTv\Apps\Backoffice\Frontend\Command;
 
@@ -12,25 +12,21 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 final class ImportCoursesToElasticsearchCommand extends Command
 {
-    private MySqlBackofficeCourseRepository         $mySqlRepository;
-    private ElasticsearchBackofficeCourseRepository $elasticRepository;
-
     public function __construct(
-        MySqlBackofficeCourseRepository $mySqlRepository,
-        ElasticsearchBackofficeCourseRepository $elasticRepository
+        private MySqlBackofficeCourseRepository $mySqlRepository,
+        private ElasticsearchBackofficeCourseRepository $elasticRepository
     ) {
         parent::__construct();
-
-        $this->mySqlRepository   = $mySqlRepository;
-        $this->elasticRepository = $elasticRepository;
     }
 
-    public function execute(InputInterface $input, OutputInterface $output): void
+    public function execute(InputInterface $input, OutputInterface $output): int
     {
         $courses = $this->mySqlRepository->searchAll();
 
         foreach ($courses as $course) {
             $this->elasticRepository->save($course);
         }
+
+        return 0;
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace CodelyTv\Apps\Mooc\Backend\Command\DomainEvents\RabbitMq;
 
@@ -15,21 +15,14 @@ use function Lambdish\Phunctional\repeat;
 
 final class ConsumeRabbitMqDomainEventsCommand extends Command
 {
-    protected static                     $defaultName = 'codelytv:domain-events:rabbitmq:consume';
-    private RabbitMqDomainEventsConsumer $consumer;
-    private DatabaseConnections          $connections;
-    private DomainEventSubscriberLocator $locator;
+    protected static $defaultName = 'codelytv:domain-events:rabbitmq:consume';
 
     public function __construct(
-        RabbitMqDomainEventsConsumer $consumer,
-        DatabaseConnections $connections,
-        DomainEventSubscriberLocator $locator
+        private RabbitMqDomainEventsConsumer $consumer,
+        private DatabaseConnections $connections,
+        private DomainEventSubscriberLocator $locator
     ) {
         parent::__construct();
-
-        $this->consumer    = $consumer;
-        $this->connections = $connections;
-        $this->locator     = $locator;
     }
 
     protected function configure(): void
@@ -40,12 +33,14 @@ final class ConsumeRabbitMqDomainEventsCommand extends Command
             ->addArgument('quantity', InputArgument::REQUIRED, 'Quantity of events to process');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): void
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $queueName       = (string) $input->getArgument('queue');
         $eventsToProcess = (int) $input->getArgument('quantity');
 
         repeat($this->consumer($queueName), $eventsToProcess);
+
+        return 0;
     }
 
     private function consumer(string $queueName): callable

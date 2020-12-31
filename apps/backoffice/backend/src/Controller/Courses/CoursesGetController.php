@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace CodelyTv\Apps\Backoffice\Backend\Controller\Courses;
 
@@ -14,41 +14,37 @@ use function Lambdish\Phunctional\map;
 
 final class CoursesGetController
 {
-    private $queryBus;
-
-    public function __construct(QueryBus $queryBus)
+    public function __construct(private QueryBus $queryBus)
     {
-        $this->queryBus = $queryBus;
     }
 
     public function __invoke(Request $request): JsonResponse
     {
+        $limit  = $request->query->get('limit');
+        $offset = $request->query->get('offset');
+
         /** @var BackofficeCoursesResponse $response */
         $response = $this->queryBus->ask(
             new SearchBackofficeCoursesByCriteriaQuery(
-                $request->query->get('filters', []),
+                (array) $request->query->get('filters'),
                 $request->query->get('order_by'),
                 $request->query->get('order'),
-                $request->query->get('limit'),
-                $request->query->get('offset')
+                null === $limit ? null : (int) $limit,
+                null === $offset ? null : (int) $offset
             )
         );
 
         return new JsonResponse(
-            map($this->toArray(), $response->courses()),
+            map(
+                fn(BackofficeCourseResponse $course) => [
+                    'id'       => $course->id(),
+                    'name'     => $course->name(),
+                    'duration' => $course->duration(),
+                ],
+                $response->courses()
+            ),
             200,
             ['Access-Control-Allow-Origin' => '*']
         );
-    }
-
-    private function toArray(): callable
-    {
-        return static function (BackofficeCourseResponse $course) {
-            return [
-                'id'       => $course->id(),
-                'name'     => $course->name(),
-                'duration' => $course->duration(),
-            ];
-        };
     }
 }

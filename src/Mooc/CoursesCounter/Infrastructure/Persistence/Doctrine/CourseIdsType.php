@@ -1,10 +1,10 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace CodelyTv\Mooc\CoursesCounter\Infrastructure\Persistence\Doctrine;
 
-use CodelyTv\Mooc\Shared\Domain\Course\CourseId;
+use CodelyTv\Mooc\Shared\Domain\Courses\CourseId;
 use CodelyTv\Shared\Infrastructure\Doctrine\Dbal\DoctrineCustomType;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\JsonType;
@@ -25,27 +25,13 @@ final class CourseIdsType extends JsonType implements DoctrineCustomType
     /** @var CourseId[] $value */
     public function convertToDatabaseValue($value, AbstractPlatform $platform)
     {
-        return parent::convertToDatabaseValue(map($this->values(), $value), $platform);
+        return parent::convertToDatabaseValue(map(fn(CourseId $id) => $id->value(), $value), $platform);
     }
 
     public function convertToPHPValue($value, AbstractPlatform $platform)
     {
         $scalars = parent::convertToPHPValue($value, $platform);
 
-        return map($this->toCourseId(), $scalars);
-    }
-
-    private function values()
-    {
-        return static function (CourseId $id) {
-            return $id->value();
-        };
-    }
-
-    private function toCourseId()
-    {
-        return static function (string $value) {
-            return new CourseId($value);
-        };
+        return map(fn(string $value) => new CourseId($value), $scalars);
     }
 }
